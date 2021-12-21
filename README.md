@@ -24,7 +24,6 @@ Ingest pipeline script is available in **ingest-pipeline.json** file
 
 Created kibana dashboard to visualize execution statistics of all the lambda functions in AWS account
 
-<iframe src="https://search-new-domain-hv5z4dbp4nkgacx32iwvixrudu.us-east-1.es.amazonaws.com/_plugin/kibana/goto/97b11ec39e435fe3b75370faf57cfc78?security_tenant=global" height="600" width="800"></iframe>
-
+![Diagram](https://github.com/Ajinkya45/monitor-lambda-function/blob/master/report.png)
 
 Automated the process of creating subscription filter on new lambda function log group using another lambda function that checks for new lambda function in AWS account and create subscription filter if it do not exist (CreateSubscriptionFilter.py)
