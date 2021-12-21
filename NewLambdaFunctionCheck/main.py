@@ -16,7 +16,7 @@ logs_client = boto3.client("logs")
 table_name = os.environ['table_name']
 filter_name = os.environ['filter_name']
 
-def lambda_handler():
+def lambda_handler(event, context):
     # list all available lambda functions in AWS account in given region
     functions = get_lambda_functions()
     # remove the lambda function that is used with subscription to avoid loop
@@ -290,7 +290,3 @@ def delete_log_subscription(items):
 
         else:
             print(f'log group {log_group_prefix + item} do not exist')
-
-        
-if __name__ == "__main__":
-    lambda_handler()
