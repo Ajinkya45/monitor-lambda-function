@@ -1,0 +1,71 @@
+#######################################################################################################
+###                                                                                                 ###
+### Processors -                                                                                    ###
+### 1) Dissect - parse the @message field and extract values for lambda function execution such     ###
+###              as execution duration and memory used. Some executions includes initialization     ###
+###              duration. First pattern is used to extract such esecutions where initialization    ###
+###              duration is included and if it is not included then second pattern (on failure)    ###
+###              is used                                                                            ###
+###                                                                                                 ###
+### 2) Remove - remove @message field after extracting required data                                ###
+###                                                                                                 ###
+### 3) Rename - change name of the field after extraction                                           ###
+###                                                                                                 ###
+### 4) convert - change data type of certain fields                                                 ###
+###                                                                                                 ###
+#######################################################################################################        
+{
+    "description": "cwl-pipeline",
+    "processors": [
+        {
+            "dissect": {
+                "field": "@message",
+                "pattern": """%{?v1} %{*request-id}: %{&request-id}	%{*duration}: %{&duration} %{?v2}	%{?v3} %{?v4}: %{BilledDuration} %{?v5}	%{?v6} %{*memory-size}: %{&memory-size} %{?v7}	%{?v8} %{?v9} %{*max-memory-used}: %{&max-memory-used} %{?v10}	%{?v11} %{?v12}: %{init-duration} %{?v13}""",
+                "tag": "main",
+                "on_failure": [
+                    {
+                        "dissect": {
+                            "field": "@message",
+                            "pattern": """%{?v1} %{*request-id}: %{&request-id}	%{*duration}: %{&duration} %{?v2}	%{?v3} %{?v4}: %{BilledDuration} %{?v5}	%{?v6} %{*memory-size}: %{&memory-size} %{?v7}	%{?v8} %{?v9} %{*max-memory-used}: %{&max-memory-used} %{?v10}""",
+                            "tag": "failure"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "remove": {
+                "field": "@message",
+                "tag": "remove"
+            }
+        },
+        {
+            "rename": {
+                "field": "Size",
+                "target_field": "Memory",
+                "tag": "rename-memory"
+            }
+        },
+        {
+            "rename": {
+                "field": "Used",
+                "target_field": "MaxMemoryUsed",
+                "tag": "rename-max-memory"
+            }
+        },
+        {
+            "rename": {
+                "field": "init-duration",
+                "target_field": "InitDuration",
+                "ignore_missing": true,
+                "tag": "rename-init"
+            }
+        },
+        {
+            "convert": {
+                "field": "MaxMemoryUsed",
+                "type": "integer"
+            }
+        }
+    ]
+}
